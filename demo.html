@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Relief Chess Prototype</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="//twitter.github.io/bootstrap/assets/css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="//twitter.github.io/bootstrap/assets/css/bootstrap-responsive.css" />
+        <link type="text/css" rel="stylesheet" href="css/reliefchess.css" />
+        <style type="text/css">
+#myCntr {
+    margin-bottom: 30px;
+    width: 520px;
+}
+.page-header {
+    padding: 20px 0 30px;
+}
+#chessWrapper {
+    margin-top: 20px; margin-bottom: 20px;
+}
+#toolBar {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 8px;
+    background-color: #e5e5e5;
+    text-align: center;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+input.count {
+    width: 24px;
+    text-align: right;
+    vertical-align: middle;
+}
+#selView {
+    width: 60px;
+}
+#txtReliefAlloc {
+    width: 160px;
+    text-align: left;
+}
+#statusBar {
+    width: 340px;
+    margin: 0 auto;
+    padding: 5px 20px;
+    background-color: #404D4F;
+    font: 11px Verdana, Arial, Tahoma, sans-serif;
+    color: yellow;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+#statusBar p {
+    margin-bottom: 3px;
+}
+div.relief-icon {
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+}
+label {
+    font-weight: bold;
+}
+        </style>
+    </head>
+    <body>
+        <div class="container" id="myCntr">
+            <div class="page-header text-center">
+                <h1>Relief Chess Prototype</h1>
+            </div>
+
+            <form class="form-inline" id="toolBar">
+                <span class="hide">
+                    <button class="btn btn-info" type="button" data-toggle="modal" data-target="#newgame" title="New Game">
+                        <i class="icon-file icon-white"></i>
+                    </button>
+                    &nbsp;
+                    <button class="btn btn-info" type="button" data-toggle="modal" data-target="#options" title="Options">
+                        <i class="icon-wrench icon-white"></i>
+                    </button>
+                    &nbsp;
+                    <button class="btn history-ctl" title="Take back move"><i class="icon-chevron-left"></i></button><input type="text" class="count" id="nMovesCount" value="0" disabled title="Count of moves"><button class="btn history-ctl" title="Redo move"><i class="icon-chevron-right"></i></button>
+                    &nbsp;
+                    <span class="input-prepend" title="View point">
+                        <span class="add-on">&nbsp;<i class="icon-eye-open"></i>&nbsp;</span>
+                        <select id="selView">
+                            <option title="White">&#9816;</option>
+                            <option title="Black">&#9822;</option>
+                        </select>
+                    </span>
+                </span>
+                <span class="hide">
+                    <span class="input-prepend">
+                        <span class="add-on" id="txtReliefAlloc">Relief Allocation: <span class="hide">Manual</span><span class="hide">Auto</span></span>
+                        <button class="btn" id="btnReliefAlloc" title="Switch allocation mode"><i class="icon-play"></i><i class="icon-pause hide"></i></button>
+                    </span>
+                </span>
+            </form>
+
+            <div id="chessWrapper"></div>
+
+            <div id="statusBar">
+                <p>
+                    <span>&nbsp;</span>
+                    <span class="hide">Hint: Pick the squares randomly or click &quot;&#9654;&quot;</span>
+                    <span class="hide">White is in check</span>
+                    <span class="hide">Black is in check</span>
+                    <span class="hide">White is in checkmate. Black wins</span>
+                    <span class="hide">Black is in checkmate. White wins</span>
+                    <span class="hide">White is in stalemate. Game is ended in draw</span>
+                    <span class="hide">Black is in stalemate. Game is ended in draw</span>
+                </p>
+                <p class="hide"></p>
+            </div>
+        </div>
+
+        <div id="newgame" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="newLabel">New Game</h3>
+            </div>
+            <div class="modal-body">
+                <p>It will cause the current game to be lost. Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary">Yes</button>
+                <button class="btn" data-dismiss="modal">No</button>
+            </div>
+        </div>
+
+        <div id="options" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="optionsLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="optionsLabel">Options</h3>
+            </div>
+            <div class="modal-body">
+                <form id="optionsForm">
+                    <label>Relief Distribution:</label>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Relief type</th>
+                                <th>Number of squares</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hide">
+                                <td>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td>
+                                    <select name="aReliefDistrib" class="elem-array">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <label>Relief constraint subjects - definition method:</label>
+                    <select name="bReliefMoveBased">
+                        <option value="0">Piece-based</option>
+                        <option value="1">Movement-based</option>
+                    </select>
+                    <label>Apply relief constraints at a capturing square:</label>
+                    <select name="bReliefOnCapture">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                    <label>Apply relief constraints for a knight:</label>
+                    <select name="bRelief4Knight">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                    <label>Set appropriate view point automatically before each move:</label>
+                    <select name="bViewAutoChange">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary">Save changes</button>
+                <button class="btn" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+        <div id="alert" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="alertLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="alertLabel">
+                    <span class="text-error hide">Failure</span>
+                    <span class="text-success hide">Success</span>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p class="text-error hide">Invalid parameters. Changes have not been saved</p>
+                <p class="text-success hide">Changes were successfully saved.<br>Note that some options only take effect on a new game</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+
+        <a href="https://github.com/you">
+            <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub">
+        </a>
+
+        <script src="//code.jquery.com/jquery-1.7.2.min.js"></script>
+        <script src="//twitter.github.io/bootstrap/assets/js/bootstrap-transition.js"></script>
+        <script src="//twitter.github.io/bootstrap/assets/js/bootstrap-modal.js"></script>
+        <script src="js/reliefchess.js"></script>
+        <script>
+$(function() {
+    var oOptsConst = {
+        'nIntReliefAlloc': 200,
+        'fnOnUpdate': updateInfo,
+        'fnOnSquare': updateSquare
+    };
+    var oOptsVar = {
+        'aReliefDistrib': [3, 1, 3, 3, 1, 3, 4, 2, 5],
+        'bReliefMoveBased': 0,
+        'bReliefOnCapture': 0,
+        'bRelief4Knight': 1,
+        'bViewAutoChange': 0
+    };
+    var sCookieName = 'opts';
+    var sOptArrName = 'aReliefDistrib';
+    var aCoordsX = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    var sPrefixSquare = 'Square: ';
+    var sPrefixRelief = ' | Constrain: ';
+    var aReliefType = [
+        'Bishop (Knight) position',
+        'Bishop movement path',
+        'Bishop movement speed',
+        'Rook position',
+        'Rook movement path',
+        'Rook movement speed',
+        'Queen position',
+        'Queen movement path',
+        'Queen movement speed'
+    ];
+    var aReliefClass = [
+        'relief-bishop-pos',
+        'relief-bishop-way',
+        'relief-bishop-spd',
+        'relief-rook-pos',
+        'relief-rook-way',
+        'relief-rook-spd',
+        'relief-queen-pos',
+        'relief-queen-way',
+        'relief-queen-spd'
+    ];
+    var iStatus = 0;
+    var oChess = $('#chessWrapper');
+
+    loadOptions();
+    oChess.reliefchess($.extend({}, oOptsConst, oOptsVar));
+    outReliefTable();
+    $('#newgame button.btn-primary').click(function() {
+        $('#newgame').modal('hide');
+        oChess.reliefchess('newgame');
+    });
+    $('#options').on('show', function() {
+        outOptions();
+    });
+    $('#options button.btn-primary').click(function() {
+        $('#options').modal('hide');
+        if (saveOptions()) {
+            oChess.reliefchess(oOptsVar);
+            alertEx(1);
+        }
+        else
+            alertEx(0);
+    });
+    $('button.history-ctl').each(function(i) {
+        $(this).data('hcId', i);
+    })
+    .click(function(e) {
+        e.preventDefault();
+        $(this).blur();
+        oChess.reliefchess($(this).data('hcId')? 'history.forward': 'history.back');
+    });
+    $('#btnReliefAlloc').click(function(e) {
+        e.preventDefault();
+        $(this).blur();
+        oChess.reliefchess('relief.alloc');
+    });
+    $('#selView').change(function() {
+        this.blur();
+        var i = this.selectedIndex;
+        oChess.reliefchess(i? 'view.black' : 'view.white');
+    });
+
+    function loadOptions() {
+        var obj;
+        (obj = loadCookie(sCookieName)) && (obj = JSON.parse(obj));
+        if (typeof obj != 'object') return;
+        for (var name in obj) {
+            if (!(name in oOptsVar)) continue;
+            oOptsVar[name] = (name == sOptArrName)? obj[name] : parseInt(obj[name]);
+        }
+    }
+
+    function saveOptions() {
+        var oElems = $('#optionsForm select[name]');
+        var arr = [], nS = 0;
+        oElems.filter('.elem-array').each(function(i) {
+            nS += (arr[i] = parseInt($(this).val()));
+        });
+        if (nS >= 32 || arr.length != 9) return false;
+        var aData = oElems.filter(':not(.elem-array)').serializeArray();
+        oOptsVar[sOptArrName] = arr.slice(0);
+        for (var i in aData) {
+            var obj = aData[i];
+            if (obj.name in oOptsVar) oOptsVar[obj.name] = parseInt(obj.value);
+        }
+        saveCookie(sCookieName, JSON.stringify(oOptsVar));
+        return true;
+    }
+
+    function loadCookie(name) {
+        var arr = document.cookie.match(new RegExp('(?:^|; )'+ name+ '=([^;]*)'));
+        return arr? decodeURIComponent(arr[1]) : false;
+    }
+
+    function saveCookie(name, val) {
+        var d = new Date(); d.setDate(d.getDate()+ 10);
+        document.cookie = name+ '='+ encodeURIComponent(val)+ '; expires='+ d.toUTCString();
+    }
+
+    function outOptions() {
+        var oElems = $('#optionsForm select[name]');
+        var arr = oOptsVar[sOptArrName];
+        oElems.filter('.elem-array').each(function(i) {
+            this.selectedIndex = arr[i];
+        });
+        for (var name in oOptsVar) {
+            if (name == sOptArrName || typeof oOptsVar[name] != 'number') continue;
+            oElems.filter('[name='+name+']').eq(0).get(0).selectedIndex = oOptsVar[name];
+        }
+    }
+
+    function outReliefTable() {
+        var oTbody = $('#optionsForm table > tbody');
+        var oRowTpl = oTbody.children('tr');
+        var oImg = oRowTpl.find('td:eq(0) > div');
+        var oSel = oRowTpl.find('td:eq(1) > select');
+        var sName = oSel.attr('name');
+        for (var i = 0; i < 9; i++) {
+            oImg.attr('class', '').addClass('relief-icon '+aReliefClass[i])
+            .attr('title', aReliefType[i]);
+            oSel.attr('name', sName+'_'+i);
+            oRowTpl.clone().appendTo(oTbody).removeClass('hide');
+        }
+        oRowTpl.remove();
+    }
+
+    function updateInfo(obj) {
+        with (obj) {
+            $('#toolBar > span').addClass('hide').eq(nReliefAlloc?1:0).removeClass('hide');
+            if (nReliefAlloc) {
+                setAllocMode(bReliefAllocMode);
+                iStatus = bReliefAllocMode? 0 : 1;
+                showStatus();
+            }
+            else {
+                iStatus = bCheck || bMate || bStalemate?
+                    (2+ (iMove%2 | bMate << 1 | bStalemate << 2))% 8 : 0;
+                $('#nMovesCount').val(iMove);
+                if (iView != $('#selView').eq(0).get(0).selectedIndex) {
+                    $('#selView').eq(0).get(0).selectedIndex = iView;
+                }
+                showStatus();
+            }
+        }
+    }
+
+    function updateSquare(obj) {
+        var s = '';
+        if (obj) with (obj) {
+            s = sPrefixSquare+ aCoordsX[x]+ (y+1)+
+                (relief >= 0 && relief < 9? sPrefixRelief+ aReliefType[relief] : '');
+        }
+        showStatus(s);
+    }
+
+    function setAllocMode(bOn) {
+        $('#txtReliefAlloc > span').addClass('hide').eq(bOn?1:0).removeClass('hide');
+        $('#btnReliefAlloc > i').addClass('hide').eq(bOn?1:0).removeClass('hide');
+    }
+
+    function showStatus(s) {
+        var aElems = $('#statusBar p');
+        if (s)
+            aElems.eq(1).html(s);
+        else
+            aElems.eq(0).children('span').addClass('hide').eq(iStatus).removeClass('hide');
+        aElems.addClass('hide').eq(s? 1: 0).removeClass('hide');
+    }
+
+    function alertEx(i) {
+        var oPopup = $('#alert');
+        oPopup.find('.modal-header > h3 > span').addClass('hide').eq(i).removeClass('hide');
+        oPopup.find('.modal-body > p').addClass('hide').eq(i).removeClass('hide');
+        oPopup.modal();
+    }
+});
+        </script>
+
+    </body>
+</html>

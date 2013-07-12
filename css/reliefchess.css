@@ -1,0 +1,136 @@
+
+table.chess-board { /* Table element */
+    /**
+    * margin-top: [DYNAMIC VALUE];
+    * margin-bottom: [DYNAMIC VALUE];
+    */
+    margin-left: auto;
+    margin-right: auto;
+    /*border-collapse: collapse;*/
+    border-collapse: separate;
+    border: 0;
+}
+table.chess-board td {
+    width: 12%;
+    height: 12%;
+    margin: 0; padding: 0;
+    font-size: 52px;
+    line-height: 42px;
+    text-align: center;
+    font-family: Times New Roman;
+}
+
+/*table.chess-board td { cursor: pointer; }*/
+
+table.chess-board td.black {
+    background-color: #b59863;
+}
+
+table.chess-board td.white {
+    background-color: #f0d9b5;
+}
+
+table.chess-board td > div:hover {
+    border: 1px black solid;
+    cursor: pointer;
+}
+
+/*table.chess-board td.black:hover { background-color: #c28560; }*/
+
+/*table.chess-board td.white:hover { background-color: #ddddaa; }*/
+
+table.chess-board td > div {
+    position: relative;
+    width: 100%; height: 100%;
+    margin: 0;
+}
+
+table.chess-board td > div.selected {
+    background-color: #4cff4c;
+}
+
+table.chess-board td > div.square-marked {
+    background-color: #FFF8DC;
+    border: 1px solid black;
+}
+
+
+.relief {
+    position: absolute; left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 90% 90%;
+}
+.relief-rook-pos {
+    background-image: url(../img/relief-rook-pos.png);
+}
+.relief-rook-way {
+    background-image: url(../img/relief-rook-way.png);
+}
+.relief-rook-spd {
+    background-image: url(../img/relief-rook-spd.png);
+}
+.relief-bishop-pos {
+    background-image: url(../img/relief-bishop-pos.png);
+}
+.relief-bishop-way {
+    background-image: url(../img/relief-bishop-way.png);
+}
+.relief-bishop-spd {
+    background-image: url(../img/relief-bishop-spd.png);
+}
+.relief-queen-pos {
+    background-image: url(../img/relief-queen-pos.png);
+}
+.relief-queen-way {
+    background-image: url(../img/relief-queen-way.png);
+}
+.relief-queen-spd {
+    background-image: url(../img/relief-queen-spd.png);
+}
+
+
+.piece {
+    position: absolute; left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+}
+.piece.pawn-white {
+    background-image: url(../img/piece-wp.png);
+}
+.piece.bishop-white {
+    background-image: url(../img/piece-wb.png);
+}
+.piece.knight-white {
+    background-image: url(../img/piece-wn.png);
+}
+.piece.rook-white {
+    background-image: url(../img/piece-wr.png);
+}
+.piece.queen-white {
+    background-image: url(../img/piece-wq.png);
+}
+.piece.king-white {
+    background-image: url(../img/piece-wk.png);
+}
+
+.piece.pawn-black {
+    background-image: url(../img/piece-bp.png);
+}
+.piece.bishop-black {
+    background-image: url(../img/piece-bb.png);
+}
+.piece.knight-black {
+    background-image: url(../img/piece-bn.png);
+}
+.piece.rook-black {
+    background-image: url(../img/piece-br.png);
+}
+.piece.queen-black {
+    background-image: url(../img/piece-bq.png);
+}
+.piece.king-black {
+    background-image: url(../img/piece-bk.png);
+}
