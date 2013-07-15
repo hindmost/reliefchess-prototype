@@ -29,8 +29,8 @@
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
 }
-input.count {
-    width: 24px;
+#txtMoveInfo {
+    width: 45px;
     text-align: right;
     vertical-align: middle;
 }
@@ -83,7 +83,15 @@ label {
                         <i class="icon-wrench icon-white"></i>
                     </button>
                     &nbsp;
-                    <button class="btn history-ctl" title="Take back move"><i class="icon-chevron-left"></i></button><input type="text" class="count" id="nMovesCount" value="0" disabled title="Count of moves"><button class="btn history-ctl" title="Redo move"><i class="icon-chevron-right"></i></button>
+                    <span class="input-append">
+                        <button class="btn history-ctl" title="Take back move"><i class="icon-chevron-left"></i></button>
+                        <span class="add-on" id="txtMoveInfo" title="Current move & Current player">
+                            #<span class="curr-move"></span>:
+                            <span class="curr-player" title="White">&#9816;</span>
+                            <span class="curr-player" title="Black">&#9822;</span>
+                        </span>
+                        <button class="btn history-ctl" title="Redo move"><i class="icon-chevron-right"></i></button>
+                    </span>
                     &nbsp;
                     <span class="input-prepend" title="View point">
                         <span class="add-on">&nbsp;<i class="icon-eye-open"></i>&nbsp;</span>
@@ -223,6 +231,7 @@ label {
 $(function() {
     var oOptsConst = {
         'nIntReliefAlloc': 200,
+        'nMovesMax': 180,
         'fnOnUpdate': updateInfo,
         'fnOnSquare': updateSquare
     };
@@ -376,7 +385,9 @@ $(function() {
             else {
                 iStatus = bCheck || bMate || bStalemate?
                     (2+ (iMove%2 | bMate << 1 | bStalemate << 2))% 8 : 0;
-                $('#nMovesCount').val(iMove);
+                var aElems = $('#txtMoveInfo').children();
+                aElems.filter('.curr-move').html(Math.floor(iMove/2)+ 1);
+                aElems.filter('.curr-player').addClass('hide').eq(iMove%2).removeClass('hide');
                 if (iView != $('#selView').eq(0).get(0).selectedIndex) {
                     $('#selView').eq(0).get(0).selectedIndex = iView;
                 }

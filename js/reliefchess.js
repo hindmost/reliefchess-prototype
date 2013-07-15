@@ -51,7 +51,6 @@ var aCastlingTrg = [3, 5, 59, 61];
 var aKingDeltas = [-9, -8, -7, -1, 1, 7, 8, 9];
 var aKingDeltasExc = [0, 3, 5,  2, 4, 7,  0, 1, 2,  5, 6, 7];
 var aPawnDeltas = [7, 8, 9, -9, -8, -7];
-var nMovesMax = 128;
 
 // Variables
 var oOptions = {
@@ -62,6 +61,7 @@ var oOptions = {
     'bReliefOnCapture': false,
     'bRelief4Knight': false,
     'bViewAutoChange': false,
+    'nMovesMax': 128,
     'fnOnUpdate': null,
     'fnOnSquare': null
 };
@@ -128,6 +128,8 @@ function setOptions(obj) {
         delete obj.fnOnSquare;
     if (typeof obj.fnOnUpdate != 'function')
         delete obj.fnOnUpdate;
+    if (obj.nMovesMax && obj.nMovesMax >= 200)
+        delete obj.nMovesMax;
     $.extend(oOptions, obj);
 }
 
@@ -284,7 +286,7 @@ function clickSquare() {
     if (oState.nReliefAlloc) {
         markSquare(id); return;
     }
-    if (oState.bMate || oState.bStalemate || iGameMove >= nMovesMax) return;
+    if (oState.bMate || oState.bStalemate || iGameMove >= oOptions.nMovesMax) return;
     if (iSqrSel < 0) {
         selectSquare(id); return;
     }
